@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ch.msf.alert</groupId>
+	<artifactId>AlertBase</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>AlertBase (${hostname}/${database.name}/skipTests:${maven.surefire.test.skipTests})</name>
+	<description>Central HIS Alert </description>
+	<organization>
+		<name>Itecor</name>
+		<url>http://www.itecor.com</url>
+	</organization>
+
+	<!-- ======================= -->
+	<!-- Git parameters access -->
+	<!-- ======================= -->
+	<scm>
+		<connection>scm:git:https://github.com/itecor/msf.git</connection>		
+		<developerConnection>scm:git:https://github.com/itecor/msf.git</developerConnection>
+	</scm>
+	<!-- ======================= -->
+	<!-- Modules managed -->
+	<!-- ======================= -->
+	<modules>
+		<module>AlertData</module>
+		<module>AlertWebApp</module>
+	</modules>
+	<properties>
+		<msf.version>0.1.0-SNAPSHOT</msf.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
+		<web.webapp.name>AlertMsf</web.webapp.name>
+	</properties>
+	<dependencies>		
+	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<directory>${basedir}/src/main/webapp/WEB-INF</directory>
+							<filtering>true</filtering>
+							<targetPath>WEB-INF</targetPath>
+							<includes>
+								<include>web.xml</include>
+							</includes>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<skipTests>${maven.surefire.test.skipTests}</skipTests>
+					<forkCount>3</forkCount>
+					<reuseForks>true</reuseForks>
+					<argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+					<systemPropertyVariables>
+						<databaseSchema>MVN_TEST${surefire.forkNumber}</databaseSchema>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- http://maven.apache.org/plugins/maven-compiler-plugin/ -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.tomcat.maven</groupId>
+					<artifactId>tomcat7-maven-plugin</artifactId>
+					<version>2.2</version>
+					<configuration>
+						<path>${project.catalina.path}</path>
+						<url>http://${hostname}:${project.catalina.port}/manager/text</url>
+						<server>Tomcat8</server>
+						<update>true</update>
+						<username>${project.catalina.username}</username>
+						<password>${project.catalina.password}</password>
+						<update>true</update>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>2.7.1</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>	
+	<repositories>
+		<repository>
+			<id>nexus</id>
+			<name>ThirdParty/</name>
+			<url>http://his.itecor.com:8081/nexus/content/repositories/thirdparty/</url>
+		</repository>
+	</repositories>
+	<profiles>
+		<profile>
+			<id>integration</id>
+			<properties>
+				<env></env>
+				<begin-comment-web-aut-bloc></begin-comment-web-aut-bloc>
+				<end-comment-web-aut-bloc></end-comment-web-aut-bloc>
+				<database.name>dataSource-integration</database.name>
+				<hostname>his.itecor.com</hostname>
+				<project.catalina.log>${catalina.base}/logs/msf/int/</project.catalina.log>
+				<project.catalina.port>8080</project.catalina.port>
+		
+				<project.catalina.path>/${project.build.finalName}${env}</project.catalina.path>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<env>Dev</env>
+				<begin-comment-web-aut-bloc></begin-comment-web-aut-bloc>
+				<end-comment-web-aut-bloc></end-comment-web-aut-bloc>
+				<basic.auth.enable>true</basic.auth.enable>
+				<database.name>dataSource-developpment</database.name>
+				<hostname>his.itecor.com</hostname>
+				<project.catalina.log>${catalina.base}/logs/msf/dev</project.catalina.log>
+				<project.catalina.port>8080</project.catalina.port>
+		
+				<project.catalina.path>/${project.build.finalName}${env}</project.catalina.path>				
+			</properties>
+		</profile>
+		<profile>
+			<id>local</id>
+			<!-- The integration profile is active by default -->
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<env></env>
+				<begin-comment-web-aut-bloc>&lt;!--</begin-comment-web-aut-bloc>
+				<end-comment-web-aut-bloc>--&gt;</end-comment-web-aut-bloc>
+				<basic.auth.enable>true</basic.auth.enable>
+				<database.name>dataSource-developpment</database.name>
+				<hostname>localhost</hostname>
+				<project.catalina.log>${catalina.home}/logs/msf/</project.catalina.log>
+				<project.catalina.port>8080</project.catalina.port>
+			
+				<project.catalina.path>/${project.build.finalName}${env}</project.catalina.path>				
+			</properties>
+		</profile>
+		<profile>
+			<id>sonar</id>
+			<!-- <activation> -->
+			<!-- <activeByDefault>true</activeByDefault> -->
+			<!-- </activation> -->
+		</profile>
+	</profiles>
+	<distributionManagement>
+	  <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>nexus</id>
+      <name>Itecor Release</name>
+      <url>http://his.itecor.com:8081/nexus/content/repositories/releases/</url>
+      <layout>default</layout>
+    </repository>
+    <snapshotRepository>
+      <uniqueVersion>true</uniqueVersion>
+      <id>nexus</id>
+      <name>Itecor Snapshots</name>
+      <url>http://his.itecor.com:8081/nexus/content/repositories/snapshots/</url>
+      <layout>legacy</layout>
+    </snapshotRepository>
+	</distributionManagement>
+</project>
