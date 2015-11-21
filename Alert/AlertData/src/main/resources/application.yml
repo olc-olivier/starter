@@ -7,6 +7,12 @@ spring:
     username: root
     password: root
     
+# JPA settings.
+jpa:
+    hibernate:
+      ddlAuto: validate     
+    show-sql: false
+    
 # Logging settings.
 logging:
 

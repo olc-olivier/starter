@@ -9,12 +9,26 @@
 	</parent>
 	<artifactId>AlertWebApp</artifactId>
 	<packaging>war</packaging>
-	<dependencies>	
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>ch.msf.alert</groupId>
 			<artifactId>AlertData</artifactId>
 			<version>${msf.version}</version>
-		</dependency>	
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${web.webapp.name}</finalName>
