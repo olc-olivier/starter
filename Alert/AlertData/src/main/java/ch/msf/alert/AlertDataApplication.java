@@ -2,6 +2,9 @@ package ch.msf.alert;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.test.context.ContextConfiguration;
 
 @SpringBootApplication
 public class AlertDataApplication {
